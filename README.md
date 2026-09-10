@@ -48,6 +48,25 @@ browser instead (no native build tooling required for that).
 | `npm run typecheck`   | `tsc --noEmit`                         |
 | `npm run lint`        | ESLint via `expo lint`                 |
 
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and pull request:
+
+- **test** — typecheck, lint, then the Jest suite.
+- **build-android** — an [EAS Build](https://docs.expo.dev/build/introduction/) of an installable
+  preview APK, gated on `test` passing. Runs on pushes to `main` and manual triggers, not on every
+  PR (EAS build minutes are limited on the free tier). iOS isn't wired up yet — add an equivalent
+  job once there's an Apple developer account to build with.
+
+The build job needs one-time setup before it'll pass:
+
+1. `npx eas login` (creates a free Expo account if you don't have one), then `npx eas init` from
+   the project root — this links the project on expo.dev and writes `extra.eas.projectId` into
+   `app.json`.
+2. Create an access token at [expo.dev/settings/access-tokens](https://expo.dev/settings/access-tokens)
+   and add it as the `EXPO_TOKEN` secret under the repo's Settings → Secrets and variables →
+   Actions.
+
 ## Tech stack
 
 - [Expo](https://expo.dev) / [Expo Router](https://docs.expo.dev/router/introduction/) (file-based
