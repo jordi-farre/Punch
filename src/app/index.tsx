@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { FlatList, View } from 'react-native';
-import { Appbar, FAB, useTheme } from 'react-native-paper';
+import { Appbar, FAB, Snackbar, Text, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '@/components/EmptyState';
@@ -12,20 +13,43 @@ export default function PackListScreen() {
   const insets = useSafeAreaInsets();
   const packs = usePacks((state) => state.packs);
   const sessions = usePacks((state) => state.sessions);
+  const checkIn = usePacks((state) => state.checkIn);
+  const undoSession = usePacks((state) => state.undoSession);
   const visiblePacks = packs
     .filter((pack) => !pack.archived)
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
+  const [lastEntryId, setLastEntryId] = useState<string | null>(null);
+
+  function handleSwipeCheckIn(packId: string) {
+    const entry = checkIn(packId);
+    if (entry) setLastEntryId(entry.id);
+  }
+
+  function handleUndo() {
+    if (lastEntryId) undoSession(lastEntryId);
+    setLastEntryId(null);
+  }
+
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
       <Appbar.Header>
-        <Appbar.Content title="Bonus Sessions" />
+        <Appbar.Content title="Session Packs" />
       </Appbar.Header>
+
+      {visiblePacks.length > 0 ? (
+        <Text
+          variant="bodySmall"
+          className="px-md pb-xs"
+          style={{ color: theme.colors.onSurfaceVariant }}>
+          Swipe a pack to log a session
+        </Text>
+      ) : null}
 
       {visiblePacks.length === 0 ? (
         <EmptyState
-          title="No bonus packs yet"
-          message="Add a coworking bonus, a gym pack, or anything else you're tracking by sessions."
+          title="No packs yet"
+          message="Add a coworking pack, a gym pack, or anything else you're tracking by sessions."
           actionLabel="Add a pack"
           onAction={() => router.push('/pack/edit')}
         />
@@ -39,6 +63,7 @@ export default function PackListScreen() {
               pack={item}
               remaining={remainingFor(item, sessions)}
               onPress={() => router.push(`/pack/${item.id}`)}
+              onCheckIn={() => handleSwipeCheckIn(item.id)}
             />
           )}
         />
@@ -50,6 +75,14 @@ export default function PackListScreen() {
         onPress={() => router.push('/pack/edit')}
         style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
       />
+
+      <Snackbar
+        visible={lastEntryId !== null}
+        onDismiss={() => setLastEntryId(null)}
+        duration={4000}
+        action={{ label: 'Undo', onPress: handleUndo }}>
+        Session used
+      </Snackbar>
     </View>
   );
 }

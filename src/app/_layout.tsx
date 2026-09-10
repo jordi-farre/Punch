@@ -4,6 +4,7 @@ import '@/global.css';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { en, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -57,16 +58,18 @@ export default function RootLayout() {
   if (!hydrated) return null;
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider theme={isDark ? paperDarkTheme : paperLightTheme}>
-        <ThemeProvider value={isDark ? navigationDarkTheme : navigationLightTheme}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="pack/[id]" />
-            <Stack.Screen name="pack/edit" options={{ presentation: 'modal' }} />
-          </Stack>
-        </ThemeProvider>
-      </PaperProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <PaperProvider theme={isDark ? paperDarkTheme : paperLightTheme}>
+          <ThemeProvider value={isDark ? navigationDarkTheme : navigationLightTheme}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="pack/[id]" />
+              <Stack.Screen name="pack/edit" options={{ presentation: 'modal' }} />
+            </Stack>
+          </ThemeProvider>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

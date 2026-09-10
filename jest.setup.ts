@@ -7,6 +7,7 @@ jest.mock('@react-native-async-storage/async-storage', () =>
 );
 
 require('react-native-reanimated').setUpTests();
+require('react-native-gesture-handler/jestSetup');
 
 afterEach(async () => {
   await AsyncStorage.clear();

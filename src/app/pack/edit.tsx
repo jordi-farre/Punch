@@ -1,12 +1,13 @@
-import { format, parseISO } from 'date-fns';
+import { format, isSameDay, parseISO } from 'date-fns';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { Appbar, Button, HelperText, Text, TextInput, useTheme } from 'react-native-paper';
-import { DatePickerInput } from 'react-native-paper-dates';
+import { Pressable, ScrollView, View } from 'react-native';
+import { Appbar, Button, Divider, HelperText, Menu, Text, TextInput, useTheme } from 'react-native-paper';
+import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AccentPicker } from '@/components/AccentPicker';
+import { applyExpiryPreset, EXPIRY_PRESETS } from '@/lib/dates';
 import { sessionsFor, usePacks } from '@/store/usePacks';
 import { accentOrder, type AccentKey } from '@/theme/paper';
 
@@ -33,6 +34,15 @@ export default function EditPackScreen() {
   );
   const [accent, setAccent] = useState<AccentKey>(existing?.accent ?? accentOrder[0]);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [expiryMenuVisible, setExpiryMenuVisible] = useState(false);
+  const [customDatePickerVisible, setCustomDatePickerVisible] = useState(false);
+
+  const matchingPreset = EXPIRY_PRESETS.find(
+    (preset) => expiryDate && isSameDay(expiryDate, applyExpiryPreset(startDate ?? new Date(), preset.key)),
+  );
+  const expiryDisplayLabel = !expiryDate
+    ? 'No expiry'
+    : (matchingPreset?.label ?? format(expiryDate, 'MMM d, yyyy'));
 
   const totalSessions = Number.parseInt(totalText, 10);
   const nameError = name.trim().length === 0;
@@ -121,13 +131,60 @@ export default function EditPackScreen() {
         </View>
 
         <View className="mt-sm">
-          <DatePickerInput
+          <Menu
+            visible={expiryMenuVisible}
+            onDismiss={() => setExpiryMenuVisible(false)}
+            anchor={
+              <Pressable
+                onPress={() => setExpiryMenuVisible(true)}
+                accessibilityLabel={`Expiry date, ${expiryDisplayLabel}`}>
+                <View pointerEvents="none">
+                  <TextInput
+                    mode="outlined"
+                    label="Expiry date (optional)"
+                    value={expiryDisplayLabel}
+                    editable={false}
+                    right={<TextInput.Icon icon="menu-down" />}
+                  />
+                </View>
+              </Pressable>
+            }>
+            {EXPIRY_PRESETS.map((preset) => (
+              <Menu.Item
+                key={preset.key}
+                title={preset.label}
+                onPress={() => {
+                  setExpiryDate(applyExpiryPreset(startDate ?? new Date(), preset.key));
+                  setExpiryMenuVisible(false);
+                }}
+              />
+            ))}
+            <Divider />
+            <Menu.Item
+              title="No expiry"
+              onPress={() => {
+                setExpiryDate(undefined);
+                setExpiryMenuVisible(false);
+              }}
+            />
+            <Menu.Item
+              title="Custom date…"
+              onPress={() => {
+                setExpiryMenuVisible(false);
+                setCustomDatePickerVisible(true);
+              }}
+            />
+          </Menu>
+          <DatePickerModal
             locale="en"
-            label="Expiry date (optional)"
-            inputMode="start"
-            value={expiryDate}
-            onChange={setExpiryDate}
-            mode="outlined"
+            mode="single"
+            visible={customDatePickerVisible}
+            date={expiryDate}
+            onDismiss={() => setCustomDatePickerVisible(false)}
+            onConfirm={({ date }) => {
+              setExpiryDate(date);
+              setCustomDatePickerVisible(false);
+            }}
           />
         </View>
 

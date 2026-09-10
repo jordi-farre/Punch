@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-import { daysUntil, expiryLabel, expiryStatus, formatShortDate } from '@/lib/dates';
+import { applyExpiryPreset, daysUntil, expiryLabel, expiryStatus, formatShortDate } from '@/lib/dates';
 
 const NOW = new Date(2026, 0, 15); // Jan 15, 2026
 
@@ -71,5 +71,23 @@ describe('expiryLabel', () => {
 describe('formatShortDate', () => {
   it('formats an ISO date as a short human date', () => {
     expect(formatShortDate('2026-03-05')).toBe('Mar 5, 2026');
+  });
+});
+
+describe('applyExpiryPreset', () => {
+  it('adds a week', () => {
+    expect(format(applyExpiryPreset(NOW, 'week'), 'yyyy-MM-dd')).toBe('2026-01-22');
+  });
+
+  it('adds a month', () => {
+    expect(format(applyExpiryPreset(NOW, 'month'), 'yyyy-MM-dd')).toBe('2026-02-15');
+  });
+
+  it('adds three months', () => {
+    expect(format(applyExpiryPreset(NOW, '3months'), 'yyyy-MM-dd')).toBe('2026-04-15');
+  });
+
+  it('adds a year', () => {
+    expect(format(applyExpiryPreset(NOW, 'year'), 'yyyy-MM-dd')).toBe('2027-01-15');
   });
 });

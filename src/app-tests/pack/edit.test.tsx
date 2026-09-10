@@ -1,6 +1,9 @@
+import { format } from 'date-fns';
+
 import EditPackScreen from '@/app/pack/edit';
+import { applyExpiryPreset, daysUntil } from '@/lib/dates';
 import { usePacks } from '@/store/usePacks';
-import { fireEvent, render, screen } from '@/test-utils/render';
+import { fireEvent, flushAnimations, render, screen } from '@/test-utils/render';
 
 const mockBack = jest.fn();
 const mockUseLocalSearchParams = jest.fn();
@@ -22,6 +25,62 @@ describe('add/edit pack screen', () => {
     expect(mockBack).toHaveBeenCalled();
     expect(usePacks.getState().packs).toHaveLength(1);
     expect(usePacks.getState().packs[0]).toMatchObject({ name: 'Gym', totalSessions: 10 });
+  });
+
+  it('defaults the start date to today', async () => {
+    mockUseLocalSearchParams.mockReturnValue({});
+    await render(<EditPackScreen />);
+
+    await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym');
+    await fireEvent.changeText(screen.getByLabelText('Total sessions'), '10');
+    await fireEvent.press(screen.getByLabelText('Save'));
+
+    expect(daysUntil(usePacks.getState().packs[0].startDate)).toBe(0);
+  });
+
+  it('sets the expiry date from a quick preset', async () => {
+    mockUseLocalSearchParams.mockReturnValue({});
+    await render(<EditPackScreen />);
+
+    await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym');
+    await fireEvent.changeText(screen.getByLabelText('Total sessions'), '10');
+    await fireEvent.press(screen.getByLabelText('Expiry date, No expiry'));
+    await flushAnimations();
+    await fireEvent.press(screen.getByText('1 month'));
+    await flushAnimations();
+    await fireEvent.press(screen.getByLabelText('Save'));
+
+    const expected = format(applyExpiryPreset(new Date(), 'month'), 'yyyy-MM-dd');
+    expect(usePacks.getState().packs[0].expiryDate).toBe(expected);
+  });
+
+  it('clears the expiry date via the "No expiry" menu item', async () => {
+    usePacks.setState({
+      packs: [
+        {
+          id: 'p1',
+          name: 'Coworking',
+          totalSessions: 10,
+          startDate: '2026-01-01',
+          expiryDate: '2026-05-15',
+          accent: 'teal',
+          archived: false,
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      sessions: [],
+      hydrated: true,
+    });
+    mockUseLocalSearchParams.mockReturnValue({ id: 'p1' });
+    await render(<EditPackScreen />);
+
+    await fireEvent.press(screen.getByLabelText('Expiry date, May 15, 2026'));
+    await flushAnimations();
+    await fireEvent.press(screen.getByText('No expiry'));
+    await flushAnimations();
+    await fireEvent.press(screen.getByLabelText('Save'));
+
+    expect(usePacks.getState().packs[0].expiryDate).toBeUndefined();
   });
 
   it('rejects a total below the sessions already used when editing', async () => {

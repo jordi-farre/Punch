@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, format, formatDistanceStrict, parseISO } from 'date-fns';
+import { addMonths, addWeeks, addYears, differenceInCalendarDays, format, formatDistanceStrict, parseISO } from 'date-fns';
 
 import type { ExpiryStatus } from '@/lib/types';
 
@@ -34,4 +34,27 @@ export function expiryLabel(expiryDate: string | undefined, now: Date = new Date
   const expiry = parseISO(expiryDate);
   if (days < 0) return `Expired ${formatDistanceStrict(now, expiry)} ago`;
   return `Expires in ${formatDistanceStrict(expiry, now)}`;
+}
+
+export type ExpiryPresetKey = 'week' | 'month' | '3months' | 'year';
+
+export const EXPIRY_PRESETS: { key: ExpiryPresetKey; label: string }[] = [
+  { key: 'week', label: '1 week' },
+  { key: 'month', label: '1 month' },
+  { key: '3months', label: '3 months' },
+  { key: 'year', label: '1 year' },
+];
+
+/** Applies an expiry preset relative to `base` (typically the pack's start date). */
+export function applyExpiryPreset(base: Date, preset: ExpiryPresetKey): Date {
+  switch (preset) {
+    case 'week':
+      return addWeeks(base, 1);
+    case 'month':
+      return addMonths(base, 1);
+    case '3months':
+      return addMonths(base, 3);
+    case 'year':
+      return addYears(base, 1);
+  }
 }

@@ -1,4 +1,4 @@
-import { render as rtlRender, type RenderOptions } from '@testing-library/react-native';
+import { act, render as rtlRender, type RenderOptions } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -26,6 +26,19 @@ export async function render(ui: ReactElement, options?: RenderOptions) {
     </SafeAreaProvider>,
     options,
   );
+}
+
+/**
+ * Paper's Portal-based components (Menu, Dialog, Snackbar) run a one-off mount/open/close
+ * animation via RN's `Animated`, completed via a real timer in the RN jest mock. Left alone, that
+ * timer can resolve after a test has already finished, leaking a state update into the next one
+ * ("PortalManager" / act warnings). Draining real timers inside `act()` keeps it contained within
+ * the test that triggered it — call after opening/closing a Menu, Dialog, or Snackbar.
+ */
+export async function flushAnimations() {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
 }
 
 export * from '@testing-library/react-native';
