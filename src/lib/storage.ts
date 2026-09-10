@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { EMPTY_STATE, type PersistedState } from '@/lib/types';
 
-const STORAGE_KEY = 'bonus-tracker:v1';
+const STORAGE_KEY = 'punch:v1';
 
 function isPersistedState(value: unknown): value is PersistedState {
   if (typeof value !== 'object' || value === null) return false;

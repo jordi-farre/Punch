@@ -1,56 +1,87 @@
-# Welcome to your Expo app 👋
+<p align="center">
+  <img src="./assets/images/icon.png" width="96" height="96" alt="Punch icon" />
+</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<h1 align="center">Punch</h1>
 
-## Get started
+<p align="center">Track prepaid session packs — coworking, gym, classes, anything sold as a bundle of visits.</p>
 
-1. Install dependencies
+## What it does
 
-   ```bash
-   npm install
-   ```
+You buy a pack of sessions (a 24-visit coworking pass, a 10-class gym card, whatever). Punch keeps
+track of how many are left, when the pack expires, and logs every check-in.
 
-2. Start the app
+- **Session packs** — name, total sessions, start date (defaults to today), an optional expiry
+  date, and a color.
+- **Check in two ways**: tap **Use a session** on a pack's detail screen, or swipe a pack in the
+  list — Gmail-style, the swipe itself completes the check-in once it passes the threshold, with
+  an **Undo** snackbar right after.
+- **Expiry tracking** — a pack's card and detail screen show "Expires in 12 days" / "Expired 3 days
+  ago"; packs expiring within 30 days are called out visually. Setting an expiry date is a single
+  dropdown with quick presets (1 week / 1 month / 3 months / 1 year, relative to the start date),
+  "No expiry", or a custom date.
+- **History** — every check-in is logged with a timestamp; delete a stray entry from the list.
+- **Guard rails** — can't check in past zero remaining; can't lower a pack's total below the
+  sessions already used.
+- Local-only persistence (no account, no server) — light/dark mode, one Material 3 palette driving
+  both the native components and the Tailwind utility classes.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Getting started
 
 ```bash
-npm run reset-project
+npm install
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Scan the QR code with [Expo Go](https://expo.dev/go) on your phone. `npm run web` opens it in a
+browser instead (no native build tooling required for that).
 
-### Other setup steps
+## Scripts
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Command              | What it does                          |
+| --------------------- | -------------------------------------- |
+| `npm start`           | Start the Metro bundler / dev server   |
+| `npm run web`         | Run in a browser via Expo web          |
+| `npm run ios` / `android` | Run on a simulator/emulator (needs Xcode / Android Studio) |
+| `npm test`            | Run the Jest test suite                |
+| `npm run test:watch`  | Jest in watch mode                     |
+| `npm run typecheck`   | `tsc --noEmit`                         |
+| `npm run lint`        | ESLint via `expo lint`                 |
 
-## Learn more
+## Tech stack
 
-To learn more about developing your project with Expo, look at the following resources:
+- [Expo](https://expo.dev) / [Expo Router](https://docs.expo.dev/router/introduction/) (file-based
+  routing, `src/app/`)
+- [React Native Paper](https://callstack.github.io/react-native-paper/) for Material Design 3
+  components, laid out with [NativeWind](https://www.nativewind.dev/) (Tailwind for React Native) —
+  both driven by one token file so they can't drift apart, see
+  [`src/theme/tokens.js`](src/theme/tokens.js)
+- [Zustand](https://zustand.docs.pmnd.rs/) for state, persisted to
+  [`AsyncStorage`](https://react-native-async-storage.github.io/async-storage/) as a single JSON
+  blob (see [`src/lib/storage.ts`](src/lib/storage.ts))
+- [`react-native-gesture-handler`](https://docs.swmansion.com/react-native-gesture-handler/) +
+  [`react-native-reanimated`](https://docs.swmansion.com/react-native-reanimated/) for the
+  swipe-to-check-in gesture
+- [Jest](https://jestjs.io/) + [React Native Testing Library](https://callstack.github.io/react-native-testing-library/)
+  for tests, run via the `jest-expo` preset
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project structure
 
-## Join the community
+```
+src/
+  app/            expo-router screens: pack list, pack detail, add/edit form
+  app-tests/      tests for the screens above (kept out of src/app/ so the router
+                  doesn't try to treat *.test.tsx files as routes)
+  components/     PackCard, RemainingCount, AccentPicker, EmptyState, SessionRow
+  lib/            pure logic: dates/expiry math, local id generation, AsyncStorage I/O, types
+  store/          the zustand store (packs, sessions, check-in/undo, guard rails)
+  theme/          MD3 + Tailwind tokens, the Paper theme built from them, NativeWind interop
+  test-utils/     a Testing Library `render` wrapper (PaperProvider + SafeAreaProvider)
+```
 
-Join our community of developers creating universal apps.
+## Data model
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Packs and session entries are stored as flat lists (not a counter on the pack), so "sessions
+remaining" is always `totalSessions - count of entries for that pack`. That's what makes undo,
+editing, and deleting a single history row fall out for free — see
+[`src/store/usePacks.ts`](src/store/usePacks.ts).
