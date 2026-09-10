@@ -36,8 +36,11 @@ export async function render(ui: ReactElement, options?: RenderOptions) {
  * the test that triggered it — call after opening/closing a Menu, Dialog, or Snackbar.
  */
 export async function flushAnimations() {
+  // The RN jest preset's Animated mock resolves each animation via a real `setTimeout(..., 16)`
+  // (one frame), not a 0ms tick — so a 0ms wait here raced it and was flaky (reliable on an idle
+  // machine, intermittent under CI's scheduling jitter). Wait comfortably past that.
   await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   });
 }
 
