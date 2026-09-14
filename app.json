@@ -8,6 +8,7 @@
     "scheme": "punch",
     "userInterfaceStyle": "automatic",
     "android": {
+      "package": "com.jordifr.punch",
       "adaptiveIcon": {
         "backgroundColor": "#6750A4",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
