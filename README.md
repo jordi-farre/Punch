@@ -52,11 +52,13 @@ browser instead (no native build tooling required for that).
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and pull request:
 
-- **test** — typecheck, lint, then the Jest suite.
-- **build-android** — an [EAS Build](https://docs.expo.dev/build/introduction/) of an installable
-  preview APK, gated on `test` passing. Runs on pushes to `main` and manual triggers, not on every
-  PR (EAS build minutes are limited on the free tier). iOS isn't wired up yet — add an equivalent
-  job once there's an Apple developer account to build with.
+- **test** — typecheck, lint, then the Jest suite. Runs on every push and pull request.
+- **build-android** — an [EAS Build](https://docs.expo.dev/build/introduction/), gated on `test`
+  passing. **Manual only**: trigger it from the repo's Actions tab → CI → Run workflow (branch
+  `main`, pick a `profile`) when you actually want a build, e.g. cutting a release — it doesn't run
+  on every push. Choose `preview` for an installable APK to test with, or `production` for the
+  Play Store `.aab` (bumps the version automatically via `autoIncrement`). iOS isn't wired up yet —
+  add an equivalent job once there's an Apple developer account to build with.
 
 The build job needs one-time setup before it'll pass:
 

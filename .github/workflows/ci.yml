@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile (see eas.json)
+        type: choice
+        options: [preview, production]
+        default: preview
 
 jobs:
   test:
@@ -12,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -34,19 +40,21 @@ jobs:
 
   # Android only for now — add an "ios" job the same way (with a "production"/"preview" profile
   # of its own) once there's an Apple developer account / credentials to build with.
+  #
+  # Manual only: trigger this from the Actions tab (branch = main, pick a profile) when you
+  # actually want a build — e.g. cutting a release. It doesn't run on every push to main or PR,
+  # since EAS build minutes are limited on the free tier and most pushes don't need a new build.
   build-android:
     name: Build (Android)
     needs: test
-    # Manual runs always build; pushes to main build too, but PRs only run the test job above —
-    # EAS build minutes are limited on the free tier, no need to spend them on every PR.
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -61,5 +69,5 @@ jobs:
           packager: npm
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build Android (preview APK)
-        run: eas build --platform android --profile preview --non-interactive
+      - name: Build Android
+        run: eas build --platform android --profile ${{ inputs.profile }} --non-interactive
