@@ -55,5 +55,8 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "eslint-import-resolver-typescript": "^4.4.5"
+  }
 }
