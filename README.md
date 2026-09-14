@@ -67,6 +67,13 @@ The build job needs one-time setup before it'll pass:
    and add it as the `EXPO_TOKEN` secret under the repo's Settings → Secrets and variables →
    Actions.
 
+Each build profile in [`eas.json`](eas.json) declares an EAS
+[environment](https://docs.expo.dev/eas/environment-variables/) (`development`/`preview`/`production`)
+matching its name. The app has no API keys or backend URLs today, so there are no environment
+variables to set — this just makes explicit what EAS would otherwise infer from the profile name.
+If that changes, add variables per-environment at expo.dev (or via `eas env:create`) rather than
+committing them to `eas.json` or `app.json`.
+
 ## Tech stack
 
 - [Expo](https://expo.dev) / [Expo Router](https://docs.expo.dev/router/introduction/) (file-based
