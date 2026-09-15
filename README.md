@@ -131,3 +131,21 @@ this specific library:
 
 Either only helps if the user has that OS backup setting turned on — there's no app-level control
 over that, only over not blocking it.
+
+Published privacy policy (for the Play Store listing / App Store Connect):
+https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH
+
+## Publishing
+
+- **Android permissions**: `expo config --type introspect` should resolve to just `INTERNET`
+  (from the Expo/React Native runtime itself, not anything the app does) — verify that hasn't
+  grown before submitting. `android.blockedPermissions` in `app.json` strips the storage
+  permissions that `expo-file-system` (a dependency of the core `expo` package, not something we
+  can uninstall) declares by default; the app has no file/media features that need them.
+- **Store listing copy**, short description (≤80 chars):
+  > Track prepaid session packs — coworking, gym, classes. Swipe to check in.
+- **Build and submit**: `eas build --profile production --platform android` (see the CI section
+  above for the same thing via GitHub Actions), then `eas submit --platform android`. Google
+  requires a closed test with 12 testers opted in for 14 continuous days before a new personal
+  developer account's first app can go to production — budget for that if this account hasn't
+  published before.
