@@ -60,7 +60,6 @@ function SwipeCheckInAction({
     <View
       style={{
         width: ACTION_WIDTH,
-        marginBottom: 24,
         borderRadius: 16,
         overflow: 'hidden',
         backgroundColor: canCheckIn ? color : disabledColor,
@@ -101,46 +100,54 @@ export function PackCard({ pack, remaining, onPress, onCheckIn, now }: Props) {
   }
 
   return (
-    <ReanimatedSwipeable
-      ref={swipeableRef}
-      renderRightActions={(swipeProgress) => (
-        <SwipeCheckInAction
-          progress={swipeProgress}
-          packName={pack.name}
-          canCheckIn={canCheckIn}
-          color={accent.color}
-          onColor={accent.on}
-          disabledColor={theme.colors.surfaceDisabled}
-          onDisabledColor={theme.colors.onSurfaceDisabled}
-          onPress={handleCheckIn}
-        />
-      )}
-      overshootRight={false}
-      enabled={canCheckIn}
-      rightThreshold={ACTION_WIDTH / 2}
-      onSwipeableOpen={handleCheckIn}>
-      <Card
-        mode="elevated"
-        onPress={onPress}
-        className="mb-lg"
-        style={{ borderLeftWidth: 4, borderLeftColor: accent.color }}
-        accessibilityLabel={`${pack.name}, ${remaining} of ${pack.totalSessions} sessions left`}>
-        <Card.Content className="gap-xs">
-          <View className="flex-row items-baseline justify-between">
-            <Text variant="titleMedium">{pack.name}</Text>
-            <Text variant="titleMedium" style={{ color: accent.color }}>
-              {remaining}
-              <Text variant="bodyMedium"> / {pack.totalSessions} left</Text>
-            </Text>
-          </View>
-          <ProgressBar progress={progress} color={accent.color} />
-          {label ? (
-            <Text variant="bodySmall" style={{ color: expiryColor }}>
-              {label}
-            </Text>
-          ) : null}
-        </Card.Content>
-      </Card>
-    </ReanimatedSwipeable>
+    // The bottom margin lives here, on a plain View wrapping the whole swipeable, rather than
+    // on the Card itself (a NativeWind `className` on the Card was silently dropped on native —
+    // ReanimatedSwipeable clones/wraps its child to attach the pan gesture and animated
+    // transform, and that doesn't preserve NativeWind's runtime-computed style the way it
+    // preserves a plain `style` prop; web's persistent CSS class isn't affected by that, which
+    // is why the gap only showed up on native). A wrapping element isn't passed through that
+    // cloning at all, so its className is unaffected.
+    <View className="mb-lg">
+      <ReanimatedSwipeable
+        ref={swipeableRef}
+        renderRightActions={(swipeProgress) => (
+          <SwipeCheckInAction
+            progress={swipeProgress}
+            packName={pack.name}
+            canCheckIn={canCheckIn}
+            color={accent.color}
+            onColor={accent.on}
+            disabledColor={theme.colors.surfaceDisabled}
+            onDisabledColor={theme.colors.onSurfaceDisabled}
+            onPress={handleCheckIn}
+          />
+        )}
+        overshootRight={false}
+        enabled={canCheckIn}
+        rightThreshold={ACTION_WIDTH / 2}
+        onSwipeableOpen={handleCheckIn}>
+        <Card
+          mode="elevated"
+          onPress={onPress}
+          style={{ borderLeftWidth: 4, borderLeftColor: accent.color }}
+          accessibilityLabel={`${pack.name}, ${remaining} of ${pack.totalSessions} sessions left`}>
+          <Card.Content className="gap-xs">
+            <View className="flex-row items-baseline justify-between">
+              <Text variant="titleMedium">{pack.name}</Text>
+              <Text variant="titleMedium" style={{ color: accent.color }}>
+                {remaining}
+                <Text variant="bodyMedium"> / {pack.totalSessions} left</Text>
+              </Text>
+            </View>
+            <ProgressBar progress={progress} color={accent.color} />
+            {label ? (
+              <Text variant="bodySmall" style={{ color: expiryColor }}>
+                {label}
+              </Text>
+            ) : null}
+          </Card.Content>
+        </Card>
+      </ReanimatedSwipeable>
+    </View>
   );
 }
