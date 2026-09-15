@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { PackCard } from '@/components/PackCard';
 import { remainingFor, usePacks } from '@/store/usePacks';
-import { radii } from '@/theme/tokens';
 
 export default function PackListScreen() {
   const theme = useTheme();
@@ -71,14 +70,16 @@ export default function PackListScreen() {
       )}
 
       {/*
-        A hand-built extended FAB rather than Paper's <FAB icon label>: on a real Android device
-        the label rendered as just "Add" instead of "Add pack" — Paper's FAB fixes its content
-        box at a hardcoded 56px height with the label unconstrained (no numberOfLines), so
-        anything that pushes the label to wrap gets silently clipped by that fixed height. Capping
-        labelMaxFontSizeMultiplier didn't fix it, which means the wrap isn't only a font-scale
-        thing. Building it from Surface + TouchableRipple avoids the whole class of bug: nothing
-        here has a fixed height, so there's nothing for a wrapped line to clip against, and
-        numberOfLines={1} makes any real overflow show up as an honest "…" instead of vanishing.
+        A hand-built icon-only FAB rather than Paper's <FAB icon label>: the extended (icon+label)
+        version clipped its label to "Add" instead of "Add pack" on a real Android device, tracing
+        back to Paper's FAB fixing its content box at a hardcoded 56px height with the label
+        unconstrained (no numberOfLines). Dropping the label sidesteps the whole class of bug
+        rather than working around it — there's nothing left to clip. Rounded square, not a full
+        circle: Material 3 moved FABs away from perfect circles, and Paper's own MD3 FAB shape
+        computation (getFabStyle in FAB/utils.ts) works out to `4 * theme.roundness` for the
+        standard 56px size — reusing that keeps this consistent with the same rounding language
+        the rest of the app's cards and dialogs already use, rather than introducing a one-off
+        circular shape.
       */}
       <Surface
         elevation={3}
@@ -86,29 +87,25 @@ export default function PackListScreen() {
           position: 'absolute',
           right: 16,
           bottom: insets.bottom + 16,
-          borderRadius: radii.xl,
+          width: 56,
+          height: 56,
+          borderRadius: 4 * theme.roundness,
         }}>
         <TouchableRipple
           onPress={() => router.push('/pack/edit')}
           borderless
-          style={{ borderRadius: radii.xl }}
+          style={{ borderRadius: 4 * theme.roundness }}
           accessibilityRole="button"
           accessibilityLabel="Add pack">
           <View
-            className="flex-row items-center gap-sm"
+            className="items-center justify-center"
             style={{
-              paddingVertical: 16,
-              paddingHorizontal: 20,
-              borderRadius: radii.xl,
+              width: 56,
+              height: 56,
+              borderRadius: 4 * theme.roundness,
               backgroundColor: theme.colors.primaryContainer,
             }}>
-            <Icon source="plus" size={24} color={theme.colors.onPrimaryContainer} />
-            <Text
-              variant="labelLarge"
-              numberOfLines={1}
-              style={{ color: theme.colors.onPrimaryContainer }}>
-              Add pack
-            </Text>
+            <Icon source="plus" size={28} color={theme.colors.onPrimaryContainer} />
           </View>
         </TouchableRipple>
       </Surface>

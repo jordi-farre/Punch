@@ -132,8 +132,9 @@ this specific library:
 Either only helps if the user has that OS backup setting turned on — there's no app-level control
 over that, only over not blocking it.
 
-Published privacy policy (for the Play Store listing / App Store Connect):
-https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH
+Full privacy policy: [`PRIVACY.md`](PRIVACY.md) (source of record) — also published at
+https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / App Store Connect
+"privacy policy URL" field.
 
 ## Publishing
 
