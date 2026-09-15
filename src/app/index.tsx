@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, View } from 'react-native';
-import { Appbar, FAB, Snackbar, Text, useTheme } from 'react-native-paper';
+import { Appbar, Icon, Snackbar, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '@/components/EmptyState';
 import { PackCard } from '@/components/PackCard';
 import { remainingFor, usePacks } from '@/store/usePacks';
+import { radii } from '@/theme/tokens';
 
 export default function PackListScreen() {
   const theme = useTheme();
@@ -69,17 +70,48 @@ export default function PackListScreen() {
         />
       )}
 
-      <FAB
-        icon="plus"
-        label="Add pack"
-        onPress={() => router.push('/pack/edit')}
-        // Paper's extended FAB label has no `numberOfLines` and sits in a fixed-height,
-        // clipped container — at a larger Android system font scale "Add pack" can wrap to a
-        // second line that's invisibly cut off, showing only "Add". Cap how far the label can
-        // scale so it always fits on one line; it can still grow a bit for accessibility.
-        labelMaxFontSizeMultiplier={1.2}
-        style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
-      />
+      {/*
+        A hand-built extended FAB rather than Paper's <FAB icon label>: on a real Android device
+        the label rendered as just "Add" instead of "Add pack" — Paper's FAB fixes its content
+        box at a hardcoded 56px height with the label unconstrained (no numberOfLines), so
+        anything that pushes the label to wrap gets silently clipped by that fixed height. Capping
+        labelMaxFontSizeMultiplier didn't fix it, which means the wrap isn't only a font-scale
+        thing. Building it from Surface + TouchableRipple avoids the whole class of bug: nothing
+        here has a fixed height, so there's nothing for a wrapped line to clip against, and
+        numberOfLines={1} makes any real overflow show up as an honest "…" instead of vanishing.
+      */}
+      <Surface
+        elevation={3}
+        style={{
+          position: 'absolute',
+          right: 16,
+          bottom: insets.bottom + 16,
+          borderRadius: radii.xl,
+        }}>
+        <TouchableRipple
+          onPress={() => router.push('/pack/edit')}
+          borderless
+          style={{ borderRadius: radii.xl }}
+          accessibilityRole="button"
+          accessibilityLabel="Add pack">
+          <View
+            className="flex-row items-center gap-sm"
+            style={{
+              paddingVertical: 16,
+              paddingHorizontal: 20,
+              borderRadius: radii.xl,
+              backgroundColor: theme.colors.primaryContainer,
+            }}>
+            <Icon source="plus" size={24} color={theme.colors.onPrimaryContainer} />
+            <Text
+              variant="labelLarge"
+              numberOfLines={1}
+              style={{ color: theme.colors.onPrimaryContainer }}>
+              Add pack
+            </Text>
+          </View>
+        </TouchableRipple>
+      </Surface>
 
       <Snackbar
         visible={lastEntryId !== null}
