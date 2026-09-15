@@ -4,8 +4,23 @@
     {
       "name": "punch-web",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["expo", "start", "--web"],
+      "runtimeArgs": [
+        "expo",
+        "start",
+        "--web"
+      ],
       "port": 8081
+    },
+    {
+      "name": "punch-native",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "expo",
+        "start",
+        "--port",
+        "8082"
+      ],
+      "port": 8082
     }
   ]
 }

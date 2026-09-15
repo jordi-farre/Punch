@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useRef } from 'react';
 import { Pressable, View } from 'react-native';
 import type { SwipeableMethods } from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -95,6 +96,7 @@ export function PackCard({ pack, remaining, onPress, onCheckIn, now }: Props) {
   const canCheckIn = remaining > 0;
 
   function handleCheckIn() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onCheckIn();
     swipeableRef.current?.close();
   }

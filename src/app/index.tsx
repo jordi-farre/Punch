@@ -73,6 +73,11 @@ export default function PackListScreen() {
         icon="plus"
         label="Add pack"
         onPress={() => router.push('/pack/edit')}
+        // Paper's extended FAB label has no `numberOfLines` and sits in a fixed-height,
+        // clipped container — at a larger Android system font scale "Add pack" can wrap to a
+        // second line that's invisibly cut off, showing only "Add". Cap how far the label can
+        // scale so it always fits on one line; it can still grow a bit for accessibility.
+        labelMaxFontSizeMultiplier={1.2}
         style={{ position: 'absolute', right: 16, bottom: insets.bottom + 16 }}
       />
 
