@@ -113,3 +113,21 @@ Packs and session entries are stored as flat lists (not a counter on the pack), 
 remaining" is always `totalSessions - count of entries for that pack`. That's what makes undo,
 editing, and deleting a single history row fall out for free — see
 [`src/store/usePacks.ts`](src/store/usePacks.ts).
+
+## Data safety
+
+There's no account and no backend — everything lives in local `AsyncStorage`, under the key
+`punch:v1`. To survive a lost or replaced phone (not live sync across devices — that would need an
+account and a backend), the app relies on the OS's own device backup, which is off by default for
+this specific library:
+
+- **iOS**: `@react-native-async-storage/async-storage` excludes its own data from iCloud/Finder
+  backup by default. Overridden via `ios.infoPlist.RCTAsyncStorageExcludeFromBackup: false` in
+  `app.json`.
+- **Android**: no such library-level opt-out exists; it just follows the app's own
+  `android:allowBackup` manifest flag, which defaults to `true` and we leave that way (set
+  explicitly in `app.json` for clarity). Covered by Android's own "Back up to Google Drive"
+  (Settings → System → Backup).
+
+Either only helps if the user has that OS backup setting turned on — there's no app-level control
+over that, only over not blocking it.
