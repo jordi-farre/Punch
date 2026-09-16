@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { usePacks } from '@/store/usePacks';
+import { useThemePreference } from '@/store/useThemePreference';
 import { colors } from '@/theme/tokens';
 import { paperDarkTheme, paperLightTheme } from '@/theme/paper';
 
@@ -42,20 +43,27 @@ const navigationDarkTheme = {
 };
 
 export default function RootLayout() {
-  const scheme = useColorScheme();
-  const isDark = scheme === 'dark';
+  const systemScheme = useColorScheme();
+  const themePreference = useThemePreference((state) => state.preference);
+  const themeHydrated = useThemePreference((state) => state.hydrated);
+  const hydrateTheme = useThemePreference((state) => state.hydrate);
+  const isDark = themePreference === 'system' ? systemScheme === 'dark' : themePreference === 'dark';
+
   const hydrate = usePacks((state) => state.hydrate);
   const hydrated = usePacks((state) => state.hydrated);
 
   useEffect(() => {
     hydrate();
-  }, [hydrate]);
+    hydrateTheme();
+  }, [hydrate, hydrateTheme]);
+
+  const ready = hydrated && themeHydrated;
 
   useEffect(() => {
-    if (hydrated) SplashScreen.hideAsync();
-  }, [hydrated]);
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
 
-  if (!hydrated) return null;
+  if (!ready) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -65,6 +73,7 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="archived" />
+              <Stack.Screen name="settings" />
               <Stack.Screen name="pack/[id]" />
               <Stack.Screen name="pack/edit" options={{ presentation: 'modal' }} />
             </Stack>

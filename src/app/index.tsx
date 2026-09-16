@@ -40,6 +40,7 @@ export default function PackListScreen() {
           accessibilityLabel="Archived packs"
           onPress={() => router.push('/archived')}
         />
+        <Appbar.Action icon="cog-outline" accessibilityLabel="Settings" onPress={() => router.push('/settings')} />
       </Appbar.Header>
 
       {visiblePacks.length > 0 ? (
