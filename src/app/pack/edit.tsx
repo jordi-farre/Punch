@@ -2,7 +2,7 @@ import { format, isSameDay, parseISO } from 'date-fns';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { Appbar, Button, Divider, HelperText, Menu, Text, TextInput, useTheme } from 'react-native-paper';
+import { Appbar, Divider, HelperText, Menu, Text, TextInput, useTheme } from 'react-native-paper';
 import { DatePickerInput, DatePickerModal } from 'react-native-paper-dates';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -198,10 +198,6 @@ export default function EditPackScreen() {
             {submitError}
           </HelperText>
         ) : null}
-
-        <Button mode="contained" onPress={handleSave} disabled={!canSubmit} className="mt-lg">
-          {isEditing ? 'Save changes' : 'Add pack'}
-        </Button>
       </ScrollView>
     </View>
   );

@@ -64,6 +64,7 @@ export default function RootLayout() {
           <ThemeProvider value={isDark ? navigationDarkTheme : navigationLightTheme}>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
+              <Stack.Screen name="archived" />
               <Stack.Screen name="pack/[id]" />
               <Stack.Screen name="pack/edit" options={{ presentation: 'modal' }} />
             </Stack>

@@ -35,6 +35,11 @@ export default function PackListScreen() {
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
       <Appbar.Header>
         <Appbar.Content title="Session Packs" />
+        <Appbar.Action
+          icon="archive-outline"
+          accessibilityLabel="Archived packs"
+          onPress={() => router.push('/archived')}
+        />
       </Appbar.Header>
 
       {visiblePacks.length > 0 ? (
