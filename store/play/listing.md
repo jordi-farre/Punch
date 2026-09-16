@@ -42,7 +42,11 @@ Punch is a small, independent app built by one person to solve one problem: know
 
 ## Assets
 
-- [`screenshots/`](screenshots/) — phone screenshots, 1080×1920 (9:16), PNG
-- [`feature-graphic.png`](feature-graphic.png) — 1024×500, PNG
+- [`screenshots/`](screenshots/) — phone screenshots, 1080×1920 (9:16) or similar, PNG. **Not yet
+  added** — take these from a real device or Expo Go (list screen, pack detail, the swipe-to-check-in
+  reveal, and the add/edit pack form all make good shots) and drop them in here.
+- [`feature-graphic.png`](feature-graphic.png) — 1024×500, PNG, no alpha channel. Generated from
+  [`feature-graphic.svg`](feature-graphic.svg) (pure SVG, no screenshot involved — edit the SVG and
+  re-render with `sharp` if it needs to change).
 - App icon: [`../../assets/images/icon.png`](../../assets/images/icon.png) (1024×1024, already used
   for the app itself — upload the same file as the Play Console app icon)

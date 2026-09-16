@@ -119,11 +119,23 @@ export default function PackDetailScreen() {
         ListHeaderComponent={
           <View className="items-center gap-md mb-lg">
             <RemainingCount remaining={remaining} total={pack.totalSessions} accentColor={accent.color} />
-            <ProgressBar
-              progress={pack.totalSessions > 0 ? remaining / pack.totalSessions : 0}
-              color={accent.color}
-              style={{ width: '100%', height: 8, borderRadius: 4 }}
-            />
+            {/*
+              Paper's ProgressBar hardcodes `height: '100%'` on its outer wrapper on web
+              (ProgressBar.tsx's `styles.webContainer`), ignoring the height we pass via `style`
+              (that only reaches the inner track). Inside a flex column that's a descendant of a
+              scrollable, height-constrained ancestor (this screen's FlatList), `100%` resolves to
+              a real pixel value instead of being ignored — stretching the bar to fill the rest of
+              the scroll area and pushing everything after it below the fold. Wrapping it in a
+              plain View with an explicit height keeps the percentage bounded to that height
+              instead.
+            */}
+            <View style={{ width: '100%', height: 8 }}>
+              <ProgressBar
+                progress={pack.totalSessions > 0 ? remaining / pack.totalSessions : 0}
+                color={accent.color}
+                style={{ borderRadius: 4 }}
+              />
+            </View>
             {label ? (
               <Text variant="bodyMedium" style={{ color: expiryColor }}>
                 {label}

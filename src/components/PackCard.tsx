@@ -141,7 +141,15 @@ export function PackCard({ pack, remaining, onPress, onCheckIn, now }: Props) {
                 <Text variant="bodyMedium"> / {pack.totalSessions} left</Text>
               </Text>
             </View>
-            <ProgressBar progress={progress} color={accent.color} />
+            {/*
+              Paper's ProgressBar hardcodes `height: '100%'` on its outer wrapper on web, which
+              resolves against whatever height this flex column ends up with instead of being
+              ignored — see the longer note on the pack detail screen's ProgressBar for the full
+              story. Wrapping it in a fixed-height View keeps it from inflating the card.
+            */}
+            <View style={{ height: 4 }}>
+              <ProgressBar progress={progress} color={accent.color} />
+            </View>
             {label ? (
               <Text variant="bodySmall" style={{ color: expiryColor }}>
                 {label}
