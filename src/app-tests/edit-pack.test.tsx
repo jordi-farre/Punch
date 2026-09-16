@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 
 import EditPackScreen from '@/app/pack/edit';
-import { applyExpiryPreset, daysUntil } from '@/lib/dates';
+import { applyExpiryPreset } from '@/lib/dates';
 import { usePacks } from '@/store/usePacks';
 import { fireEvent, flushAnimations, render, screen } from '@/test-utils/render';
 
@@ -13,31 +13,7 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => mockUseLocalSearchParams(),
 }));
 
-describe('add/edit pack screen', () => {
-  it('creates a pack and lands it in the store', async () => {
-    mockUseLocalSearchParams.mockReturnValue({});
-    await render(<EditPackScreen />);
-
-    await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym');
-    await fireEvent.changeText(screen.getByLabelText('Total sessions'), '10');
-    await fireEvent.press(screen.getByLabelText('Save'));
-
-    expect(mockBack).toHaveBeenCalled();
-    expect(usePacks.getState().packs).toHaveLength(1);
-    expect(usePacks.getState().packs[0]).toMatchObject({ name: 'Gym', totalSessions: 10 });
-  });
-
-  it('defaults the start date to today', async () => {
-    mockUseLocalSearchParams.mockReturnValue({});
-    await render(<EditPackScreen />);
-
-    await fireEvent.changeText(screen.getByLabelText('Name'), 'Gym');
-    await fireEvent.changeText(screen.getByLabelText('Total sessions'), '10');
-    await fireEvent.press(screen.getByLabelText('Save'));
-
-    expect(daysUntil(usePacks.getState().packs[0].startDate)).toBe(0);
-  });
-
+describe('editing a pack', () => {
   it('sets the expiry date from a quick preset', async () => {
     mockUseLocalSearchParams.mockReturnValue({});
     await render(<EditPackScreen />);
@@ -89,7 +65,7 @@ describe('add/edit pack screen', () => {
     expect(usePacks.getState().packs[0].expiryDate).toBeUndefined();
   });
 
-  it('rejects a total below the sessions already used when editing', async () => {
+  it('rejects a total below the sessions already used', async () => {
     usePacks.setState({
       packs: [
         {

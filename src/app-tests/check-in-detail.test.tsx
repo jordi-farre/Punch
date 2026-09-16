@@ -27,7 +27,7 @@ function seedPack(totalSessions: number) {
   });
 }
 
-describe('pack detail screen', () => {
+describe('using a session from the pack detail screen', () => {
   it('checks in a session, shows the undo snackbar, and undo restores it', async () => {
     seedPack(2);
     await render(<PackDetailScreen />);

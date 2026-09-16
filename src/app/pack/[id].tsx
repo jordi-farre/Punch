@@ -91,7 +91,13 @@ export default function PackDetailScreen() {
         <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
-          anchor={<Appbar.Action icon="dots-vertical" onPress={() => setMenuVisible(true)} />}>
+          anchor={
+            <Appbar.Action
+              icon="dots-vertical"
+              accessibilityLabel="More options"
+              onPress={() => setMenuVisible(true)}
+            />
+          }>
           <Menu.Item
             leadingIcon="pencil-outline"
             title="Edit"
