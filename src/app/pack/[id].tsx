@@ -1,6 +1,8 @@
+import * as Sharing from 'expo-sharing';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FlatList, View } from 'react-native';
+import { captureRef } from 'react-native-view-shot';
 import {
   Appbar,
   Button,
@@ -17,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/EmptyState';
 import { RemainingCount } from '@/components/RemainingCount';
 import { SessionRow } from '@/components/SessionRow';
+import { SharePackCard } from '@/components/SharePackCard';
 import { expiryLabel, expiryStatus } from '@/lib/dates';
 import { remainingFor, useSessionsFor, usePacks } from '@/store/usePacks';
 import { accentFor } from '@/theme/paper';
@@ -37,6 +40,8 @@ export default function PackDetailScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<string | null>(null);
+  const [shareUnavailable, setShareUnavailable] = useState(false);
+  const shareCardRef = useRef<View>(null);
 
   if (!pack) {
     return (
@@ -83,6 +88,16 @@ export default function PackDetailScreen() {
     router.back();
   }
 
+  async function handleShare() {
+    setMenuVisible(false);
+    if (!(await Sharing.isAvailableAsync())) {
+      setShareUnavailable(true);
+      return;
+    }
+    const uri = await captureRef(shareCardRef, { format: 'png', quality: 1 });
+    await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: `Share ${pack!.name}` });
+  }
+
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
       <Appbar.Header>
@@ -106,6 +121,7 @@ export default function PackDetailScreen() {
               router.push({ pathname: '/pack/edit', params: { id: pack.id } });
             }}
           />
+          <Menu.Item leadingIcon="share-variant-outline" title="Share" onPress={handleShare} />
           <Menu.Item leadingIcon="archive-outline" title="Archive" onPress={handleArchive} />
           <Menu.Item
             leadingIcon="delete-outline"
@@ -176,6 +192,19 @@ export default function PackDetailScreen() {
         action={{ label: 'Undo', onPress: handleUndo }}>
         Session used
       </Snackbar>
+
+      <Snackbar visible={shareUnavailable} onDismiss={() => setShareUnavailable(false)} duration={4000}>
+        Sharing isn&apos;t available on this device
+      </Snackbar>
+
+      {/* Off-screen: exists only so `handleShare` can capture it as an image, never shown or
+          announced (also keeps its own duplicate text out of screen-reader/query results). */}
+      <View
+        style={{ position: 'absolute', top: -9999, left: 0 }}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants">
+        <SharePackCard pack={pack} remaining={remaining} expiryLabel={label} history={history} ref={shareCardRef} />
+      </View>
 
       <Portal>
         <Dialog visible={confirmDeleteVisible} onDismiss={() => setConfirmDeleteVisible(false)}>
