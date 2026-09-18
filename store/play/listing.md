@@ -42,13 +42,16 @@ Punch is a small, independent app built by one person to solve one problem: know
 
 ## Assets
 
-- [`screenshots/`](screenshots/) — phone screenshots, 1080×1920 (9:16), PNG, dark theme:
-  - [`01-list.png`](screenshots/01-list.png) — the pack list
-  - [`02-detail.png`](screenshots/02-detail.png) — a pack's detail screen with history
-  - [`03-add-pack.png`](screenshots/03-add-pack.png) — the add/edit pack form
-  - **Missing**: the swipe-to-check-in reveal. It can't be generated the way the others were (the
-    swipe gesture doesn't respond to scripted browser events, only real touch/pointer input) — take
-    this one from a real device or Expo Go and drop it in as `04-swipe.png`.
+- `screenshots/` — phone screenshots, 1080×1920 (9:16), PNG. **Not started.** These need to come
+  from a real device or Expo Go — there's no reliable way to generate them from the web preview.
+  (An earlier attempt captured the web preview via html2canvas; the images looked visibly wrong
+  next to the real app — clipped text, a garbled button, misplaced elements — because html2canvas
+  is a from-scratch re-implementation of layout and text rendering, not a real screenshot, and
+  diverges from actual rendering in exactly the ways that showed up. `react-native-view-shot`,
+  used elsewhere in this app for the pack-sharing feature, hits the same wall on web — its web
+  implementation is html2canvas too; only its native iOS/Android implementation is a true capture.)
+  Good shots: the pack list, a pack's detail screen with some history, the swipe-to-check-in
+  reveal, and the add/edit pack form.
 - [`feature-graphic.png`](feature-graphic.png) — 1024×500, PNG, no alpha channel. Generated from
   [`feature-graphic.svg`](feature-graphic.svg) (pure SVG, no screenshot involved — edit the SVG and
   re-render with `sharp` if it needs to change).
