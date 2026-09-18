@@ -42,9 +42,13 @@ Punch is a small, independent app built by one person to solve one problem: know
 
 ## Assets
 
-- [`screenshots/`](screenshots/) — phone screenshots, 1080×1920 (9:16) or similar, PNG. **Not yet
-  added** — take these from a real device or Expo Go (list screen, pack detail, the swipe-to-check-in
-  reveal, and the add/edit pack form all make good shots) and drop them in here.
+- [`screenshots/`](screenshots/) — phone screenshots, 1080×1920 (9:16), PNG, dark theme:
+  - [`01-list.png`](screenshots/01-list.png) — the pack list
+  - [`02-detail.png`](screenshots/02-detail.png) — a pack's detail screen with history
+  - [`03-add-pack.png`](screenshots/03-add-pack.png) — the add/edit pack form
+  - **Missing**: the swipe-to-check-in reveal. It can't be generated the way the others were (the
+    swipe gesture doesn't respond to scripted browser events, only real touch/pointer input) — take
+    this one from a real device or Expo Go and drop it in as `04-swipe.png`.
 - [`feature-graphic.png`](feature-graphic.png) — 1024×500, PNG, no alpha channel. Generated from
   [`feature-graphic.svg`](feature-graphic.svg) (pure SVG, no screenshot involved — edit the SVG and
   re-render with `sharp` if it needs to change).
