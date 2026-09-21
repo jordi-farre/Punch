@@ -143,6 +143,11 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   grown before submitting. `android.blockedPermissions` in `app.json` strips the storage
   permissions that `expo-file-system` (a dependency of the core `expo` package, not something we
   can uninstall) declares by default; the app has no file/media features that need them.
+- **R8 minification**: enabled for release builds via `expo-build-properties` in `app.json`
+  (`enableMinifyInReleaseBuilds` + `enableShrinkResourcesInReleaseBuilds`), to raise Play Console's
+  app-optimization score. It only touches native Android code (the app logic is Hermes bytecode),
+  and R8 can strip classes a library loads by reflection — a release-only crash. Test a `preview`
+  build on a device before shipping a `production` one.
 - **Store listing copy**, short description (≤80 chars):
   > Track prepaid session packs — coworking, gym, classes. Swipe to check in.
 - **Build and submit**: `eas build --profile production --platform android` (see the CI section
