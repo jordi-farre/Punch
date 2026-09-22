@@ -45,13 +45,12 @@ reaches you. Check the git history of this file for exactly what changed and whe
 
 ## Questions
 
-[jordifr@gmail.com](mailto:jordifr@gmail.com) · [github.com/jordi-farre/Punch](https://github.com/jordi-farre/Punch)
+Open an issue at [github.com/jordi-farre/Punch](https://github.com/jordi-farre/Punch/issues).
 
 Punch is an independent, single-developer app. This policy covers Punch only.
 
 ---
 
-A styled version of this same policy is published at
-https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH — that's the link to use for the Play Store /
-App Store Connect "privacy policy URL" field. This file is the source-controlled copy of record;
-if the two ever drift, this one wins.
+A styled version of this same policy (source: [`store/play/privacy-policy.html`](store/play/privacy-policy.html))
+is published at https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH. This file is the
+source-controlled copy of record; if the two ever drift, this one wins.

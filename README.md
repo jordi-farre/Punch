@@ -153,6 +153,11 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   permission synthesis, not native manifest merging. Check an actual build's merged manifest
   (`android/app/src/main/AndroidManifest.xml` after `expo prebuild`) if verifying the real
   permission list end to end.
+- **R8 minification**: enabled for release builds via `expo-build-properties` in `app.json`
+  (`enableMinifyInReleaseBuilds` + `enableShrinkResourcesInReleaseBuilds`), to raise Play Console's
+  app-optimization score. It only touches native Android code (the app logic is Hermes bytecode),
+  and R8 can strip classes a library loads by reflection — a release-only crash. Test a `preview`
+  build on a device before shipping a `production` one.
 - **Store listing copy**, short description (≤80 chars):
   > Track prepaid session packs — coworking, gym, classes. Swipe to check in.
 - **Build and submit**: `eas build --profile production --platform android` (see the CI section
@@ -160,3 +165,7 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   requires a closed test with 12 testers opted in for 14 continuous days before a new personal
   developer account's first app can go to production — budget for that if this account hasn't
   published before.
+
+## License
+
+[MIT](LICENSE)
