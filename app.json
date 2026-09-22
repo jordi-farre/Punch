@@ -42,6 +42,12 @@
       ],
       "expo-sharing",
       [
+        "expo-notifications",
+        {
+          "color": "#6750A4"
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

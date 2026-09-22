@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
 import { makeId } from '@/lib/id';
+import { cancelRemindersForPack, syncRemindersForPack } from '@/lib/notifications';
 import { load, save } from '@/lib/storage';
 import type { Pack, SessionEntry } from '@/lib/types';
 import type { AccentKey } from '@/theme/tokens';
@@ -77,6 +78,7 @@ export const usePacks = create<PacksState>((set, get) => ({
     const packs = [...get().packs, pack];
     set({ packs });
     persist({ packs, sessions: get().sessions });
+    void syncRemindersForPack(pack, get().sessions);
     return pack;
   },
 
@@ -93,12 +95,20 @@ export const usePacks = create<PacksState>((set, get) => ({
     const nextPacks = packs.map((p) => (p.id === id ? { ...p, ...patch } : p));
     set({ packs: nextPacks });
     persist({ packs: nextPacks, sessions });
+    const updated = nextPacks.find((p) => p.id === id)!;
+    void syncRemindersForPack(updated, sessions);
   },
 
   archivePack: (id, archived = true) => {
     const packs = get().packs.map((p) => (p.id === id ? { ...p, archived } : p));
     set({ packs });
     persist({ packs, sessions: get().sessions });
+    if (archived) {
+      void cancelRemindersForPack(id);
+    } else {
+      const restored = packs.find((p) => p.id === id);
+      if (restored) void syncRemindersForPack(restored, get().sessions);
+    }
   },
 
   deletePack: (id) => {
@@ -106,6 +116,7 @@ export const usePacks = create<PacksState>((set, get) => ({
     const sessions = get().sessions.filter((entry) => entry.packId !== id);
     set({ packs, sessions });
     persist({ packs, sessions });
+    void cancelRemindersForPack(id);
   },
 
   checkIn: (packId) => {
@@ -120,14 +131,18 @@ export const usePacks = create<PacksState>((set, get) => ({
     const nextSessions = [...sessions, entry];
     set({ sessions: nextSessions });
     persist({ packs, sessions: nextSessions });
+    void syncRemindersForPack(pack, nextSessions);
     return entry;
   },
 
   undoSession: (entryId) => {
     const { packs, sessions } = get();
-    const nextSessions = sessions.filter((entry) => entry.id !== entryId);
+    const entry = sessions.find((e) => e.id === entryId);
+    const nextSessions = sessions.filter((e) => e.id !== entryId);
     set({ sessions: nextSessions });
     persist({ packs, sessions: nextSessions });
+    const pack = entry && packs.find((p) => p.id === entry.packId);
+    if (pack) void syncRemindersForPack(pack, nextSessions);
   },
 }));
 

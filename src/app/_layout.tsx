@@ -10,7 +10,9 @@ import { en, registerTranslation } from 'react-native-paper-dates';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { syncAllReminders } from '@/lib/notifications';
 import { usePacks } from '@/store/usePacks';
+import { useReminderSettings } from '@/store/useReminderSettings';
 import { useThemePreference } from '@/store/useThemePreference';
 import { colors } from '@/theme/tokens';
 import { paperDarkTheme, paperLightTheme } from '@/theme/paper';
@@ -52,15 +54,23 @@ export default function RootLayout() {
   const hydrate = usePacks((state) => state.hydrate);
   const hydrated = usePacks((state) => state.hydrated);
 
+  const hydrateReminderSettings = useReminderSettings((state) => state.hydrate);
+  const reminderSettingsHydrated = useReminderSettings((state) => state.hydrated);
+
   useEffect(() => {
     hydrate();
     hydrateTheme();
-  }, [hydrate, hydrateTheme]);
+    hydrateReminderSettings();
+  }, [hydrate, hydrateTheme, hydrateReminderSettings]);
 
-  const ready = hydrated && themeHydrated;
+  const ready = hydrated && themeHydrated && reminderSettingsHydrated;
 
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  useEffect(() => {
+    if (ready) void syncAllReminders(usePacks.getState().packs, usePacks.getState().sessions);
   }, [ready]);
 
   if (!ready) return null;

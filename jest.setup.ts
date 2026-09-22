@@ -7,6 +7,16 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
+jest.mock('expo-notifications', () => ({
+  getPermissionsAsync: jest.fn().mockResolvedValue({ granted: false, canAskAgain: false }),
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: false, canAskAgain: false }),
+  scheduleNotificationAsync: jest.fn().mockResolvedValue('mock-notification-id'),
+  cancelScheduledNotificationAsync: jest.fn().mockResolvedValue(undefined),
+  cancelAllScheduledNotificationsAsync: jest.fn().mockResolvedValue(undefined),
+  getAllScheduledNotificationsAsync: jest.fn().mockResolvedValue([]),
+  SchedulableTriggerInputTypes: { DATE: 'date', TIME_INTERVAL: 'timeInterval' },
+}));
+
 require('react-native-reanimated').setUpTests();
 require('react-native-gesture-handler/jestSetup');
 
