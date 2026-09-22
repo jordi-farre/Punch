@@ -21,6 +21,15 @@ async function requestPermissionIfNeeded(): Promise<boolean> {
   return requested.granted;
 }
 
+export type NotificationPermissionStatus = 'granted' | 'blocked' | 'undetermined';
+
+export async function getNotificationPermissionStatus(): Promise<NotificationPermissionStatus> {
+  const current = await Notifications.getPermissionsAsync();
+  if (current.granted) return 'granted';
+  if (!current.canAskAgain) return 'blocked';
+  return 'undetermined';
+}
+
 async function scheduleAt(identifier: string, date: Date, title: string, body: string, now: Date) {
   await Notifications.cancelScheduledNotificationAsync(identifier).catch(() => {});
   const granted = await requestPermissionIfNeeded();

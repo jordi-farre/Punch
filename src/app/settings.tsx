@@ -1,8 +1,9 @@
 import { router } from 'expo-router';
-import { View } from 'react-native';
-import { Appbar, SegmentedButtons, Switch, Text, useTheme } from 'react-native-paper';
+import { useEffect, useState } from 'react';
+import { AppState, Linking, View } from 'react-native';
+import { Appbar, Button, SegmentedButtons, Switch, Text, useTheme } from 'react-native-paper';
 
-import { syncAllReminders } from '@/lib/notifications';
+import { getNotificationPermissionStatus, syncAllReminders, type NotificationPermissionStatus } from '@/lib/notifications';
 import { usePacks } from '@/store/usePacks';
 import { useReminderSettings } from '@/store/useReminderSettings';
 import { useThemePreference } from '@/store/useThemePreference';
@@ -14,6 +15,19 @@ export default function SettingsScreen() {
 
   const remindersEnabled = useReminderSettings((state) => state.enabled);
   const setRemindersEnabled = useReminderSettings((state) => state.setEnabled);
+
+  const [permissionStatus, setPermissionStatus] = useState<NotificationPermissionStatus>('undetermined');
+
+  useEffect(() => {
+    function refresh() {
+      void getNotificationPermissionStatus().then(setPermissionStatus);
+    }
+    refresh();
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') refresh();
+    });
+    return () => subscription.remove();
+  }, []);
 
   function handleToggleReminders(value: boolean) {
     setRemindersEnabled(value);
@@ -48,6 +62,23 @@ export default function SettingsScreen() {
           </View>
           <Switch value={remindersEnabled} onValueChange={handleToggleReminders} />
         </View>
+
+        {remindersEnabled && permissionStatus === 'blocked' ? (
+          <View
+            className="flex-row items-center justify-between p-sm mt-sm"
+            style={{ backgroundColor: theme.colors.errorContainer, borderRadius: theme.roundness }}>
+            <Text variant="bodySmall" className="flex-1" style={{ color: theme.colors.onErrorContainer }}>
+              Blocked in system settings
+            </Text>
+            <Button
+              onPress={() => {
+                if (typeof Linking.openSettings === 'function') Linking.openSettings();
+              }}
+              textColor={theme.colors.onErrorContainer}>
+              Open Settings
+            </Button>
+          </View>
+        ) : null}
       </View>
     </View>
   );
