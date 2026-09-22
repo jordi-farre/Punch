@@ -7,6 +7,21 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
+// jest-expo doesn't stub expo-notifications' native module, so unmocked calls (e.g.
+// getPermissionsAsync) resolve to `undefined` instead of a real result and crash any test that
+// touches a pack mutation reminders.ts reacts to. Permission denied by default — scheduling then
+// no-ops, which is what every existing test (none of which are about notifications) wants;
+// reminders.ts's own logic is covered directly in reminders.test.ts.
+jest.mock('expo-notifications', () => ({
+  getPermissionsAsync: jest.fn().mockResolvedValue({ granted: false, canAskAgain: false }),
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: false, canAskAgain: false }),
+  scheduleNotificationAsync: jest.fn().mockResolvedValue('mock-notification-id'),
+  cancelScheduledNotificationAsync: jest.fn().mockResolvedValue(undefined),
+  cancelAllScheduledNotificationsAsync: jest.fn().mockResolvedValue(undefined),
+  getAllScheduledNotificationsAsync: jest.fn().mockResolvedValue([]),
+  SchedulableTriggerInputTypes: { DATE: 'date', TIME_INTERVAL: 'timeInterval' },
+}));
+
 require('react-native-reanimated').setUpTests();
 require('react-native-gesture-handler/jestSetup');
 

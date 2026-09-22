@@ -21,6 +21,10 @@ track of how many are left, when the pack expires, and logs every check-in.
   dropdown with quick presets (1 week / 1 month / 3 months / 1 year, relative to the start date),
   "No expiry", or a custom date.
 - **History** — every check-in is logged with a timestamp; delete a stray entry from the list.
+- **Expiry reminders** (optional, on by default, toggle in Settings) — a local notification when a
+  pack is falling behind the pace it'd need to use every session before expiry, and a last-chance
+  notification a few days out if any are still unused. See [`src/lib/reminders.ts`](src/lib/reminders.ts)
+  for the exact rules.
 - **Guard rails** — can't check in past zero remaining; can't lower a pack's total below the
   sessions already used.
 - Local-only persistence (no account, no server) — light/dark mode, one Material 3 palette driving
@@ -143,6 +147,12 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   grown before submitting. `android.blockedPermissions` in `app.json` strips the storage
   permissions that `expo-file-system` (a dependency of the core `expo` package, not something we
   can uninstall) declares by default; the app has no file/media features that need them.
+  `expo-notifications` (for expiry reminders) similarly brings its own `POST_NOTIFICATIONS`
+  permission via its native module's manifest, merged in at build time regardless of the `plugins`
+  entry — `expo config --type introspect` won't show it, since that only reflects Expo's own
+  permission synthesis, not native manifest merging. Check an actual build's merged manifest
+  (`android/app/src/main/AndroidManifest.xml` after `expo prebuild`) if verifying the real
+  permission list end to end.
 - **Store listing copy**, short description (≤80 chars):
   > Track prepaid session packs — coworking, gym, classes. Swipe to check in.
 - **Build and submit**: `eas build --profile production --platform android` (see the CI section

@@ -1,13 +1,26 @@
 import { router } from 'expo-router';
 import { View } from 'react-native';
-import { Appbar, SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Appbar, SegmentedButtons, Switch, Text, useTheme } from 'react-native-paper';
 
+import { syncAllReminders } from '@/lib/notifications';
+import { usePacks } from '@/store/usePacks';
+import { useReminderSettings } from '@/store/useReminderSettings';
 import { useThemePreference } from '@/store/useThemePreference';
 
 export default function SettingsScreen() {
   const theme = useTheme();
   const preference = useThemePreference((state) => state.preference);
   const setPreference = useThemePreference((state) => state.setPreference);
+
+  const remindersEnabled = useReminderSettings((state) => state.enabled);
+  const setRemindersEnabled = useReminderSettings((state) => state.setEnabled);
+
+  function handleToggleReminders(value: boolean) {
+    setRemindersEnabled(value);
+    // Either resyncs every pack's reminder (now enabled) or clears them all (now disabled) —
+    // syncAllReminders already branches on the setting itself, so one call covers both.
+    void syncAllReminders(usePacks.getState().packs, usePacks.getState().sessions);
+  }
 
   return (
     <View className="flex-1" style={{ backgroundColor: theme.colors.background }}>
@@ -27,6 +40,17 @@ export default function SettingsScreen() {
             { value: 'dark', label: 'Dark', icon: 'moon-waning-crescent' },
           ]}
         />
+
+        <View className="flex-row items-center justify-between mt-lg">
+          <View className="flex-1 pr-md">
+            <Text variant="labelLarge">Expiry reminders</Text>
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+              A nudge when a pack is falling behind pace, and a last chance a few days before it
+              expires.
+            </Text>
+          </View>
+          <Switch value={remindersEnabled} onValueChange={handleToggleReminders} />
+        </View>
       </View>
     </View>
   );
