@@ -35,8 +35,8 @@ Punch is a small, independent app built by one person to solve one problem: know
 | --- | --- |
 | App name | Punch |
 | Category | Productivity (or Lifestyle / Tools — pick at listing time) |
-| Contact email | jordifr@gmail.com |
-| Privacy policy URL | https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH (source: [`PRIVACY.md`](../../PRIVACY.md)) |
+| Contact email | Set directly in Play Console — Google requires a real one there regardless of what's written here, so it isn't repeated in this file |
+| Privacy policy URL | https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH — a styled version of [`PRIVACY.md`](../../PRIVACY.md), source at [`privacy-policy.html`](privacy-policy.html) |
 | Content rating | No content concerns — a personal tracking tool with no user-generated content shared with others |
 | Data safety form | Collects: nothing. Shares: nothing. See [`PRIVACY.md`](../../PRIVACY.md) |
 
