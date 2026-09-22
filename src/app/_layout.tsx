@@ -70,8 +70,6 @@ export default function RootLayout() {
   }, [ready]);
 
   useEffect(() => {
-    // Time (and therefore each pack's pace) moves on while the app is closed, with no per-pack
-    // mutation to trigger a resync — so do one on every app start instead.
     if (ready) void syncAllReminders(usePacks.getState().packs, usePacks.getState().sessions);
   }, [ready]);
 

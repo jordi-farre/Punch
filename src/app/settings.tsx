@@ -17,8 +17,6 @@ export default function SettingsScreen() {
 
   function handleToggleReminders(value: boolean) {
     setRemindersEnabled(value);
-    // Either resyncs every pack's reminder (now enabled) or clears them all (now disabled) —
-    // syncAllReminders already branches on the setting itself, so one call covers both.
     void syncAllReminders(usePacks.getState().packs, usePacks.getState().sessions);
   }
 

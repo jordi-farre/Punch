@@ -20,7 +20,7 @@ export const useReminderSettings = create<ReminderSettingsState>((set) => ({
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       if (raw === 'true' || raw === 'false') enabled = raw === 'true';
     } catch {
-      // Fall back to enabled.
+      enabled = true;
     }
     set({ enabled, hydrated: true });
   },

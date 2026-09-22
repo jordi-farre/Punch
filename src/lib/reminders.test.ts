@@ -3,7 +3,7 @@ import { format, parseISO, subDays } from 'date-fns';
 import { computeReminderPlan, nextNineAM } from '@/lib/reminders';
 import type { Pack, SessionEntry } from '@/lib/types';
 
-const NOW = new Date(2026, 0, 15); // Jan 15, 2026 (a Thursday)
+const NOW = new Date(2026, 0, 15);
 
 function isoOffset(days: number, from: Date = NOW): string {
   const date = new Date(from);
@@ -62,21 +62,18 @@ describe('computeReminderPlan', () => {
       expiryDate: isoOffset(60),
       totalSessions: 20,
     });
-    // No sessions used yet: pace is 0, so the projection collapses to "remind now".
     const plan = computeReminderPlan(pack, [], NOW);
     expect(plan.behindAt).toEqual(NOW);
   });
 
   it('always sets last chance to 3 days before expiry when sessions remain, regardless of pace', () => {
     const pack = makePack({ startDate: isoOffset(-40), expiryDate: isoOffset(30), totalSessions: 20 });
-    const sessions = makeSessions(pack.id, 18); // way ahead of pace
+    const sessions = makeSessions(pack.id, 18);
     const plan = computeReminderPlan(pack, sessions, NOW);
     expect(plan.lastChanceAt).toEqual(subDays(parseISO(pack.expiryDate!), 3));
   });
 
   it('projects a clean pace forward with the buffer applied', () => {
-    // 40 days elapsed, 20 of 30 sessions used → pace = 0.5/day exactly, 10 remaining.
-    // daysNeeded = 10 / 0.5 = 20, buffered = 20 * 1.25 = 25 (no rounding ambiguity).
     const pack = makePack({ startDate: isoOffset(-40), expiryDate: isoOffset(40), totalSessions: 30 });
     const sessions = makeSessions(pack.id, 20);
     const plan = computeReminderPlan(pack, sessions, NOW);
@@ -84,9 +81,6 @@ describe('computeReminderPlan', () => {
   });
 
   it('suppresses the behind-pace reminder once the projection would land within the last-chance window', () => {
-    // 40 days elapsed, 40 of 41 sessions used → pace = 1/day exactly, 1 remaining.
-    // daysNeeded = 1, buffered = 1.25 → ceil 2 days before expiry, inside the 3-day last-chance
-    // window, so the behind-pace reminder is skipped and last chance alone covers it.
     const pack = makePack({ startDate: isoOffset(-40), expiryDate: isoOffset(30), totalSessions: 41 });
     const sessions = makeSessions(pack.id, 40);
     const plan = computeReminderPlan(pack, sessions, NOW);
@@ -110,19 +104,19 @@ describe('computeReminderPlan', () => {
 
 describe('nextNineAM', () => {
   it('rolls forward to today at 9am when earlier the same day', () => {
-    const from = new Date(2026, 0, 10, 3, 0); // 3am
+    const from = new Date(2026, 0, 10, 3, 0);
     const now = new Date(2026, 0, 1);
     expect(nextNineAM(from, now)).toEqual(new Date(2026, 0, 10, 9, 0, 0, 0));
   });
 
   it('rolls forward to the next day at 9am when later the same day', () => {
-    const from = new Date(2026, 0, 10, 14, 0); // 2pm
+    const from = new Date(2026, 0, 10, 14, 0);
     const now = new Date(2026, 0, 1);
     expect(nextNineAM(from, now)).toEqual(new Date(2026, 0, 11, 9, 0, 0, 0));
   });
 
   it('never lands before "now", even when the target date is in the past', () => {
-    const from = new Date(2026, 0, 1, 3, 0); // long before "now"
+    const from = new Date(2026, 0, 1, 3, 0);
     const now = new Date(2026, 0, 10, 12, 0);
     const result = nextNineAM(from, now);
     expect(result.getTime()).toBeGreaterThanOrEqual(now.getTime());

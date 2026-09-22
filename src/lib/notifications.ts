@@ -32,8 +32,6 @@ async function scheduleAt(identifier: string, date: Date, title: string, body: s
   });
 }
 
-/** Cancels both of a pack's reminders — call when it's archived or deleted, or when reminders are
- * turned off entirely. */
 export async function cancelRemindersForPack(packId: string): Promise<void> {
   await Promise.all([
     Notifications.cancelScheduledNotificationAsync(behindId(packId)).catch(() => {}),
@@ -41,12 +39,6 @@ export async function cancelRemindersForPack(packId: string): Promise<void> {
   ]);
 }
 
-/**
- * Recomputes a pack's reminder plan and (re)schedules it, replacing whatever was previously
- * scheduled for this pack — safe to call after any change to the pack or its sessions. A `null`
- * date from `computeReminderPlan` cancels the corresponding reminder rather than leaving a stale
- * one in place. No-ops (and clears any pending reminders) when the user has turned reminders off.
- */
 export async function syncRemindersForPack(pack: Pack, sessions: SessionEntry[], now: Date = new Date()): Promise<void> {
   if (!useReminderSettings.getState().enabled) {
     await cancelRemindersForPack(pack.id);
@@ -83,8 +75,6 @@ export async function syncRemindersForPack(pack: Pack, sessions: SessionEntry[],
   }
 }
 
-/** Re-syncs every pack's reminders — call once on app start, since time (and therefore pace) has
- * moved on while the app was closed, with no per-pack mutation to trigger a resync. */
 export async function syncAllReminders(packs: Pack[], sessions: SessionEntry[], now: Date = new Date()): Promise<void> {
   if (!useReminderSettings.getState().enabled) {
     await Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
