@@ -150,3 +150,7 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   requires a closed test with 12 testers opted in for 14 continuous days before a new personal
   developer account's first app can go to production — budget for that if this account hasn't
   published before.
+
+## License
+
+[MIT](LICENSE)
