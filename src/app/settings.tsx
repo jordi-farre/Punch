@@ -45,8 +45,7 @@ export default function SettingsScreen() {
           <View className="flex-1 pr-md">
             <Text variant="labelLarge">Expiry reminders</Text>
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-              A nudge when a pack is falling behind pace, and a last chance a few days before it
-              expires.
+              Lets you know if a pack looks likely to expire with sessions unused.
             </Text>
           </View>
           <Switch value={remindersEnabled} onValueChange={handleToggleReminders} />
