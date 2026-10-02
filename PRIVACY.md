@@ -1,6 +1,6 @@
 # Punch Privacy Policy
 
-**Effective 2026-09-15**
+**Effective 2026-10-02**
 
 Punch doesn't have an account, a server, or an analytics kit — so there isn't much of a policy to
 write. Here's the whole thing.
@@ -17,6 +17,11 @@ On your device, only your device. The pack names, session counts, and check-in h
 are saved with your phone's operating system under the key `punch:v1` (see
 [`src/lib/storage.ts`](src/lib/storage.ts)), and never leave it. Uninstalling the app deletes that
 data permanently — there's no copy anywhere else for us to hold.
+
+You can also export a backup file from Settings. Punch only creates the file and hands it to your
+phone's share sheet, so where it goes (a cloud drive, an email, a chat) is entirely your choice and
+it is never sent anywhere by the app itself. Importing reads a file you pick and replaces what's on
+the device.
 
 ## Backing up a lost phone
 

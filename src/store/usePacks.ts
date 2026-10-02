@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
 import { makeId } from '@/lib/id';
-import { cancelRemindersForPack, syncRemindersForPack } from '@/lib/notifications';
+import { cancelRemindersForPack, syncAllReminders, syncRemindersForPack } from '@/lib/notifications';
 import { load, save } from '@/lib/storage';
-import type { Pack, SessionEntry } from '@/lib/types';
+import type { Pack, PersistedState, SessionEntry } from '@/lib/types';
 import type { AccentKey } from '@/theme/tokens';
 
 export type NewPackInput = {
@@ -26,6 +26,7 @@ type PacksState = {
   updatePack: (id: string, patch: PackPatch) => void;
   archivePack: (id: string, archived?: boolean) => void;
   deletePack: (id: string) => void;
+  replaceAll: (next: PersistedState) => void;
   /** Records a check-in for the pack. Returns the created entry, or `null` if the pack has no
    * sessions remaining. */
   checkIn: (packId: string) => SessionEntry | null;
@@ -117,6 +118,17 @@ export const usePacks = create<PacksState>((set, get) => ({
     set({ packs, sessions });
     persist({ packs, sessions });
     void cancelRemindersForPack(id);
+  },
+
+  replaceAll: (next) => {
+    const previousPacks = get().packs;
+    set({ packs: next.packs, sessions: next.sessions });
+    persist({ packs: next.packs, sessions: next.sessions });
+    const nextIds = new Set(next.packs.map((pack) => pack.id));
+    for (const pack of previousPacks) {
+      if (!nextIds.has(pack.id)) void cancelRemindersForPack(pack.id);
+    }
+    void syncAllReminders(next.packs, next.sessions);
   },
 
   checkIn: (packId) => {

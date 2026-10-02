@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppState, Linking, View } from 'react-native';
 import { Appbar, Button, SegmentedButtons, Switch, Text, useTheme } from 'react-native-paper';
 
+import { BackupSection } from '@/components/BackupSection';
 import { getNotificationPermissionStatus, syncAllReminders, type NotificationPermissionStatus } from '@/lib/notifications';
 import { usePacks } from '@/store/usePacks';
 import { useReminderSettings } from '@/store/useReminderSettings';
@@ -79,6 +80,8 @@ export default function SettingsScreen() {
             </Button>
           </View>
         ) : null}
+
+        <BackupSection />
       </View>
     </View>
   );

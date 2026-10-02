@@ -92,4 +92,30 @@ describe('usePacks store', () => {
     expect(usePacks.getState().sessions).toHaveLength(1);
     expect(usePacks.getState().hydrated).toBe(true);
   });
+  it('replaceAll swaps in the new packs and sessions and persists them', async () => {
+    addTestPack({ name: 'Old' });
+
+    usePacks.getState().replaceAll({
+      version: 1,
+      packs: [
+        {
+          id: 'imported',
+          name: 'Imported',
+          totalSessions: 10,
+          startDate: '2026-01-01',
+          accent: 'teal',
+          archived: false,
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      sessions: [{ id: 's1', packId: 'imported', usedAt: '2026-01-02T00:00:00.000Z' }],
+    });
+
+    expect(usePacks.getState().packs.map((pack) => pack.name)).toEqual(['Imported']);
+    expect(usePacks.getState().sessions).toHaveLength(1);
+
+    const persisted = await load();
+    expect(persisted.packs.map((pack) => pack.name)).toEqual(['Imported']);
+    expect(persisted.sessions).toHaveLength(1);
+  });
 });

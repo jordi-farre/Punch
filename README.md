@@ -25,6 +25,10 @@ track of how many are left, when the pack expires, and logs every check-in.
   pack is falling behind the pace it'd need to use every session before expiry, and a last-chance
   notification a few days out if any are still unused. See [`src/lib/reminders.ts`](src/lib/reminders.ts)
   for the exact rules.
+- **Backup** (Settings) — export all packs and history to a JSON file and share it wherever you
+  like, or import one to replace what's on the device. The way to move data between installs, e.g.
+  from a sideloaded build to the Play Store one (different signing keys, so Android can't update
+  in place and the app has to be uninstalled first).
 - **Guard rails** — can't check in past zero remaining; can't lower a pack's total below the
   sessions already used.
 - Local-only persistence (no account, no server) — light/dark mode, one Material 3 palette driving
