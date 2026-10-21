@@ -2,39 +2,56 @@
 
 Copy-paste source for the Play Console store listing. Keep this in sync if the listing changes.
 
-## Short description
+## App name (store title)
 
-_Max 80 characters. Currently 73._
+_Max 30 characters. Currently 30._ Only the store title; the home-screen name stays "Punch".
+Plain "Punch" competes with boxing apps and work time clocks ("punch in"), so the title also
+carries the words people actually search for.
 
 ```
-Track prepaid session packs — coworking, gym, classes. Swipe to check in.
+Punch: Class Pass & Punch Card
+```
+
+## Short description
+
+_Max 80 characters. Currently 74._
+
+```
+Punch card tracker for gym, class and coworking passes. Swipe to check in.
 ```
 
 ## Full description
 
-_Max 4000 characters. Currently ~840._
+_Max 4000 characters. Currently ~1730._
 
 ```
-Track the prepaid session packs you actually pay for — a 24-visit coworking pass, a 10-class gym card, a punch card at your favorite spot. Punch keeps count so you don't have to.
+Punch is a simple punch card tracker for the prepaid passes you actually pay for: a 10-class yoga card, a gym pass, a pilates or climbing bundle, a 24-visit coworking pass, a punch card at your favorite café. Punch counts every visit so you always know how many sessions are left, and reminds you before a pass expires with classes unused.
 
 WHAT IT DOES
-• Add a pack: a name, how many sessions it includes, an optional expiry date, and a color
-• Check in two ways — tap Use a session, or swipe the pack in the list (Gmail-style: the swipe itself logs it, with an Undo right after)
-• See what's expiring soon at a glance, right on the card
-• Every check-in is logged, so you can review or undo a stray tap
+• Add a pass in seconds: a name, how many sessions or visits it includes, an optional expiry date, and a color
+• Check in two ways: tap Use a session, or swipe the pass in the list (Gmail-style, with an Undo right after)
+• See sessions left and days to expiry at a glance, right on each card
+• Every check-in is logged with its date, so you can review your visit history or remove a stray tap
+• Expiry reminders let you know if a pass looks likely to expire with sessions unused, so you don't pay for classes you never take
+• Archive finished passes to keep your list clean
+• Back up your passes and visit history to a file, and restore them on a new phone
+• Light and dark theme
+
+WORKS FOR ANY PREPAID PASS
+Gym visits, fitness classes, yoga, pilates, spinning, CrossFit, climbing, swimming, dance or martial arts classes, personal training sessions, coworking day passes, car wash or coffee punch cards, tutoring, physio or massage bundles. If you bought it as a pack of sessions, Punch can count it.
 
 PRIVATE BY DESIGN
-No account, no sign-in, no server. Everything you enter stays on your phone — Punch has nothing to sync and nothing to sell. Full privacy policy: https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH
+No account, no sign-in, no ads, no server. Everything you enter stays on your phone. Punch has nothing to sync and nothing to sell. Full privacy policy: https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH
 
-Punch is a small, independent app built by one person to solve one problem: knowing how many sessions are actually left.
+Punch is a small, independent app built by one person to solve one problem: knowing how many sessions are actually left on a class pass or punch card.
 ```
 
 ## Other listing fields
 
 | Field | Value |
 | --- | --- |
-| App name | Punch |
-| Category | Productivity (or Lifestyle / Tools — pick at listing time) |
+| App name | See [App name](#app-name-store-title) |
+| Category | Health & Fitness. Gym and class passes are the main use, and it is a less crowded search space than Productivity |
 | Contact email | Set directly in Play Console — Google requires a real one there regardless of what's written here, so it isn't repeated in this file |
 | Privacy policy URL | https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH — a styled version of [`PRIVACY.md`](../../PRIVACY.md), source at [`privacy-policy.html`](privacy-policy.html) |
 | Content rating | No content concerns — a personal tracking tool with no user-generated content shared with others |
