@@ -58,24 +58,30 @@ browser instead (no native build tooling required for that).
 
 ## CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and pull request:
+- **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): typecheck, lint, then the Jest
+  suite, on every push to `main` and every pull request. The other workflows reuse it.
+- **Preview** ([`.github/workflows/preview.yml`](.github/workflows/preview.yml)): manual only
+  (Actions → Preview → Run workflow). Runs CI, then builds the `preview` profile on the GitHub
+  runner with `eas build --local` and publishes the installable APK as the `preview` pre-release,
+  replacing the previous one.
+- **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml)): manual only
+  (Actions → Release → Run workflow), picking `patch`, `minor` or `major`. Runs CI, works out the
+  next version from the last `vX.Y.Z` tag (with no tag yet, it ships `app.json`'s version as is),
+  commits it to `app.json` as "Release X.Y.Z", tags `vX.Y.Z`, builds the `production` profile (Play
+  Store `.aab`), and only once the build succeeds pushes the commit and tag and creates a GitHub
+  release with the `.aab` and the commit messages since the previous tag. The release commit is
+  authored by `github-actions[bot]`. `v1.0.0` marks the commit of the first Play Store build.
 
-- **test** — typecheck, lint, then the Jest suite. Runs on every push and pull request.
-- **build-android** — an [EAS Build](https://docs.expo.dev/build/introduction/), gated on `test`
-  passing. **Manual only**: trigger it from the repo's Actions tab → CI → Run workflow (branch
-  `main`, pick a `profile`) when you actually want a build, e.g. cutting a release — it doesn't run
-  on every push. Choose `preview` for an installable APK to test with, or `production` for the
-  Play Store `.aab` (bumps the version automatically via `autoIncrement`). iOS isn't wired up yet —
-  add an equivalent job once there's an Apple developer account to build with.
+`version` in `app.json` is the user-facing version and only changes through Release. The Android
+`versionCode` is separate: EAS keeps it remotely and bumps it on every preview and production build.
+iOS isn't wired up yet.
 
-The build job needs one-time setup before it'll pass:
+One-time setup for the build jobs:
 
-1. `npx eas login` (creates a free Expo account if you don't have one), then `npx eas init` from
-   the project root — this links the project on expo.dev and writes `extra.eas.projectId` into
-   `app.json`.
-2. Create an access token at [expo.dev/settings/access-tokens](https://expo.dev/settings/access-tokens)
-   and add it as the `EXPO_TOKEN` secret under the repo's Settings → Secrets and variables →
-   Actions.
+1. `npx eas-cli@latest login`, then `npx eas-cli@latest init` from the project root (writes
+   `extra.eas.projectId` and `owner` into `app.json`).
+2. Add an `EXPO_TOKEN` secret (from [expo.dev/settings/access-tokens](https://expo.dev/settings/access-tokens))
+   under the repo's Settings → Secrets and variables → Actions.
 
 Each build profile in [`eas.json`](eas.json) declares an EAS
 [environment](https://docs.expo.dev/eas/environment-variables/) (`development`/`preview`/`production`)
@@ -163,9 +169,9 @@ https://claude.ai/artifact/DUpj4dVQj2NVsA7JSHHPWH for the Play Store listing / A
   and R8 can strip classes a library loads by reflection — a release-only crash. Test a `preview`
   build on a device before shipping a `production` one.
 - **Store listing copy**, short description (≤80 chars):
-  > Track prepaid session packs — coworking, gym, classes. Swipe to check in.
-- **Build and submit**: `eas build --profile production --platform android` (see the CI section
-  above for the same thing via GitHub Actions), then `eas submit --platform android`. Google
+  > Punch card tracker for gym, class and coworking passes. Swipe to check in.
+- **Build and submit**: run the Release workflow (see the CI section above), then
+  `eas submit --platform android` or upload the `.aab` from the GitHub release in Play Console. Google
   requires a closed test with 12 testers opted in for 14 continuous days before a new personal
   developer account's first app can go to production — budget for that if this account hasn't
   published before.
