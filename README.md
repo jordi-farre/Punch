@@ -66,7 +66,11 @@ browser instead (no native build tooling required for that).
 - **Preview** ([`.github/workflows/preview.yml`](.github/workflows/preview.yml)): manual only
   (Actions → Preview → Run workflow). Runs CI, then builds the `preview` profile on the GitHub
   runner with `eas build --local` and publishes the installable APK as the `preview` pre-release,
-  replacing the previous one.
+  replacing the previous one. Preview builds are a separate Android app, "Punch Preview"
+  (`com.jordifr.punch.preview`, link scheme `punch-preview`), set in
+  [`app.config.js`](app.config.js), so they install next to the Play Store app with their own data
+  instead of replacing it. EAS keeps a separate signing key for that package, created on its first
+  build.
 - **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml)): manual only
   (Actions → Release → Run workflow), picking `patch`, `minor` or `major`. Runs CI, works out the
   next version from the last `vX.Y.Z` tag (with no tag yet, it ships `app.json`'s version as is),
