@@ -7,6 +7,9 @@
       "developmentClient": true,
       "distribution": "internal",
       "environment": "development",
+      "env": {
+        "PUNCH_BUILD_PROFILE": "development"
+      },
       "android": {
         "buildType": "apk"
       }
@@ -14,6 +17,9 @@
     "preview": {
       "distribution": "internal",
       "environment": "preview",
+      "env": {
+        "PUNCH_BUILD_PROFILE": "preview"
+      },
       "android": {
         "buildType": "apk"
       },
@@ -21,6 +27,9 @@
     },
     "production": {
       "environment": "production",
+      "env": {
+        "PUNCH_BUILD_PROFILE": "production"
+      },
       "autoIncrement": true
     }
   },

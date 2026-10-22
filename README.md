@@ -29,6 +29,9 @@ track of how many are left, when the pack expires, and logs every check-in.
   like, or import one to replace what's on the device. The way to move data between installs, e.g.
   from a sideloaded build to the Play Store one (different signing keys, so Android can't update
   in place and the app has to be uninstalled first).
+- **App version** (Settings) — `Punch 1.2.0`; preview builds add their build number
+  (`Punch 1.2.0 · preview 23`). The build profile reaches the app through `PUNCH_BUILD_PROFILE`
+  in [`eas.json`](eas.json), read by [`app.config.js`](app.config.js).
 - **Guard rails** — can't check in past zero remaining; can't lower a pack's total below the
   sessions already used.
 - Local-only persistence (no account, no server) — light/dark mode, one Material 3 palette driving

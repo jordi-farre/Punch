@@ -1,3 +1,5 @@
+import * as Application from 'expo-application';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { AppState, Linking, View } from 'react-native';
@@ -5,9 +7,19 @@ import { Appbar, Button, SegmentedButtons, Switch, Text, useTheme } from 'react-
 
 import { BackupSection } from '@/components/BackupSection';
 import { getNotificationPermissionStatus, syncAllReminders, type NotificationPermissionStatus } from '@/lib/notifications';
+import { versionLabel } from '@/lib/version';
 import { usePacks } from '@/store/usePacks';
 import { useReminderSettings } from '@/store/useReminderSettings';
 import { useThemePreference } from '@/store/useThemePreference';
+
+function currentVersionLabel(): string {
+  const buildProfile = Constants.expoConfig?.extra?.buildProfile;
+  return versionLabel({
+    version: Constants.expoConfig?.version ?? '',
+    buildProfile: typeof buildProfile === 'string' ? buildProfile : null,
+    buildNumber: Application.nativeBuildVersion,
+  });
+}
 
 export default function SettingsScreen() {
   const theme = useTheme();
@@ -82,6 +94,10 @@ export default function SettingsScreen() {
         ) : null}
 
         <BackupSection />
+
+        <Text variant="bodySmall" className="mt-lg" style={{ color: theme.colors.onSurfaceVariant, textAlign: 'center' }}>
+          {currentVersionLabel()}
+        </Text>
       </View>
     </View>
   );
