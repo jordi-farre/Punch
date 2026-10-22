@@ -1,5 +1,5 @@
 import { format, parseISO } from 'date-fns';
-import { forwardRef } from 'react';
+import { type ComponentRef, forwardRef } from 'react';
 import { View } from 'react-native';
 import { ProgressBar, Text } from 'react-native-paper';
 
@@ -24,7 +24,7 @@ const CARD_WIDTH = 360;
  * chrome (buttons, delete icons, app bar) the real screen has — just the numbers and history
  * someone would actually want to show.
  */
-export const SharePackCard = forwardRef<View, Props>(function SharePackCard(
+export const SharePackCard = forwardRef<ComponentRef<typeof View>, Props>(function SharePackCard(
   { pack, remaining, expiryLabel, history },
   ref,
 ) {

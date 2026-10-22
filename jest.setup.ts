@@ -17,6 +17,14 @@ jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { DATE: 'date', TIME_INTERVAL: 'timeInterval' },
 }));
 
+jest.mock('react-native/src/private/assets/AssetRegistry', () => ({
+  AssetRegistry: require('react-native/asset-registry'),
+}));
+
+jest.mock('react-native-gesture-handler/lib/module/handlers/gestures/installUIRuntimeBindings', () =>
+  require('react-native-gesture-handler/lib/module/handlers/gestures/installUIRuntimeBindings.web'),
+);
+
 require('react-native-reanimated').setUpTests();
 require('react-native-gesture-handler/jestSetup');
 
@@ -24,7 +32,7 @@ require('react-native-gesture-handler/jestSetup');
 // gesture are worklets and some are not...") fires from ReanimatedSwipeable in this Jest
 // environment but not in the real app (verified in-browser) — Reanimated's babel plugin marks
 // worklets differently under babel-jest than under Metro. It's not actionable (the library isn't
-// user-configurable here, and the installed version is pinned by Expo SDK 57), so filter just
+// user-configurable here, and the installed version is pinned by Expo SDK 58), so filter just
 // this one known message rather than let it bury real console.error output in test runs.
 const originalConsoleError = console.error;
 console.error = (...args: unknown[]) => {

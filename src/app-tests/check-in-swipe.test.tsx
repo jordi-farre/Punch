@@ -4,6 +4,27 @@ import { usePacks } from '@/store/usePacks';
 
 jest.mock('expo-router', () => ({ router: { push: jest.fn() } }));
 
+jest.mock('react-native-gesture-handler/ReanimatedSwipeable', () => {
+  const { forwardRef, useImperativeHandle } = jest.requireActual('react');
+  const { Pressable, View } = jest.requireActual('react-native');
+  return {
+    __esModule: true,
+    default: forwardRef(function MockSwipeable(
+      { children, renderRightActions, enabled = true, onSwipeableOpen }: any,
+      ref: any,
+    ) {
+      useImperativeHandle(ref, () => ({ close: () => {}, openRight: () => {}, reset: () => {} }));
+      return (
+        <View>
+          {renderRightActions?.({ value: 1 }, { value: 0 }, {})}
+          <Pressable testID="swipe-open" disabled={!enabled} onPress={() => onSwipeableOpen?.('right')} />
+          {children}
+        </View>
+      );
+    }),
+  };
+});
+
 function seedPack(totalSessions: number, used = 0) {
   usePacks.setState({
     packs: [
@@ -31,7 +52,7 @@ describe('swiping a pack to check in', () => {
     seedPack(24);
     await render(<PackListScreen />);
 
-    await fireEvent.press(screen.getByLabelText('Use a session for Coworking'));
+    await fireEvent.press(screen.getByTestId('swipe-open'));
 
     expect(screen.getByText('Session used')).toBeOnTheScreen();
     expect(screen.getByText('23 / 24 left')).toBeOnTheScreen();

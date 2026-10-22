@@ -1,6 +1,6 @@
 import * as Sharing from 'expo-sharing';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useRef, useState } from 'react';
+import { type ComponentRef, useRef, useState } from 'react';
 import { FlatList, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import {
@@ -41,7 +41,7 @@ export default function PackDetailScreen() {
   const [confirmDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const [lastEntryId, setLastEntryId] = useState<string | null>(null);
   const [shareUnavailable, setShareUnavailable] = useState(false);
-  const shareCardRef = useRef<View>(null);
+  const shareCardRef = useRef<ComponentRef<typeof View>>(null);
 
   if (!pack) {
     return (

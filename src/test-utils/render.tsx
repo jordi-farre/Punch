@@ -1,5 +1,6 @@
 import { act, render as rtlRender, type RenderOptions } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -21,9 +22,11 @@ export function resetPacksStore() {
 // so callers must `await render(...)`, same as they would `@testing-library/react-native`'s own.
 export async function render(ui: ReactElement, options?: RenderOptions) {
   return rtlRender(
-    <SafeAreaProvider initialMetrics={initialMetrics}>
-      <PaperProvider theme={paperLightTheme}>{ui}</PaperProvider>
-    </SafeAreaProvider>,
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider initialMetrics={initialMetrics}>
+        <PaperProvider theme={paperLightTheme}>{ui}</PaperProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>,
     options,
   );
 }

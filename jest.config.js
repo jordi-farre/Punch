@@ -2,7 +2,7 @@ module.exports = {
   preset: 'jest-expo',
   // Reanimated 4 delegates its native runtime to react-native-worklets; this resolver makes
   // Jest resolve the web/JS implementation instead of the native one.
-  resolver: 'react-native-worklets/jest/resolver',
+  resolver: 'react-native-reanimated/jest/resolver',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '\\.css$': '<rootDir>/jest.css-mock.js',
